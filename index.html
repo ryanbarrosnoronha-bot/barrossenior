@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K.BARROS - Residencial Senior</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Variáveis Globais */
+        :root {
+            --fundo-principal: #F5F1E6; 
+            --verde-secundario: #717A5D; 
+            --verde-destaque: #5C634B;   
+            --texto-principal: #333333;  
+            --texto-no-verde: #F9F9F9;   
+            --whatsapp-verde: #25D366;
+            --card-width: 320px;
+        }
+
+        /* Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--fundo-principal); color: var(--texto-principal); line-height: 1.6; overflow-x: hidden; }
+        h1, h2, h3 { font-family: 'Lora', serif; font-weight: 600; margin-bottom: 15px; }
+        
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Animação do Brilho (Reflexo de Vidro) */
+        @keyframes reflexoVidro { 
+            0% { left: -150%; } 
+            20% { left: 200%; } 
+            100% { left: 200%; } 
+        }
+
+        /* CURSOR DE PLANTINHA NOS BOTÕES E LINKS */
+        .btn:hover, 
+        .controle-btn:hover, 
+        .menu-toggle:hover, 
+        .nav-link:hover,
+        .dot-f:hover,
+        .indicador:hover,
+        .card-estatico:hover,
+        #easter-icon-container:hover {
+            cursor: url('cursor-planta.png') 16 16, pointer !important;
+        }
+
+        /* HEADER & MENU */
+        header { 
+            background-color: var(--verde-secundario); padding: 0 5%; 
+            display: flex; justify-content: flex-end; align-items: center; 
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); height: 80px;
+        }
+        
+        .menu-toggle { background: none; border: none; color: var(--texto-no-verde); font-size: 35px; cursor: pointer; transition: 0.3s; }
+        .menu-toggle:hover { transform: scale(1.05); }
+
+        #menu-dropdown {
+            position: absolute; top: 80px; right: 5%; width: 250px;
+            display: none; flex-direction: column; padding: 25px; border-radius: 12px; 
+            background: rgba(92, 99, 75, 0.98); backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25); border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        #menu-dropdown.show { display: flex; animation: slideDown 0.3s ease forwards; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        #menu-dropdown ul { list-style: none; display: flex; flex-direction: column; gap: 20px; }
+        
+        .nav-link { 
+            position: relative; color: var(--texto-no-verde); text-decoration: none; font-size: 15px; 
+            text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding-bottom: 5px; display: inline-block;
+        }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 0;
+            background-color: var(--texto-no-verde); transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+        /* TELAS */
+        .tela { display: none; padding: 60px 5%; min-height: 90vh; max-width: 1200px; margin: 0 auto; }
+        .tela.ativa { display: block; }
+
+        /* ÁREA DA IMAGEM FULLSCREEN COM VÍDEO */
+        .hero-fullscreen {
+            width: 100vw; height: 75vh; min-height: 400px; position: relative; left: 50%;
+            transform: translateX(-50%); margin-top: -60px; margin-bottom: 50px;
+            display: flex; align-items: flex-end; justify-content: center; padding-bottom: 40px; overflow: hidden; 
+        }
+
+        .hero-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
+
+        /* BOTÃO WHATSAPP */
+        .btn { 
+            display: inline-block; background-color: rgba(37, 211, 102, 0.9); backdrop-filter: blur(8px);
+            color: #fff; padding: 18px 45px; text-decoration: none; border-radius: 50px; font-weight: 600; 
+            transition: 0.3s; box-shadow: 0 8px 20px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.4);
+            position: relative; overflow: hidden; z-index: 10;
+        }
+        .btn:hover { transform: scale(1.05); background-color: var(--whatsapp-verde); }
+        .btn::before {
+            content: ""; position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+            transform: skewX(-25deg); animation: reflexoVidro 3s infinite; 
+        }
+
+        /* CARDS DA HOME */
+        .cards-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 900px; margin: 0 auto; }
+        .glass-card { 
+            position: relative; overflow: hidden; flex: 1 1 250px; max-width: 280px; 
+            background: rgba(255,255,255,0.5); backdrop-filter: blur(10px);
+            padding: 25px 15px; text-align: center; border-radius: 12px; border: 1px solid #fff;
+            color: var(--verde-destaque); font-weight: 600; transition: 0.3s;
+        }
+        .glass-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); background: #fff; }
+        .glass-card::before { 
+            content: ""; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; 
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent); 
+            transform: skewX(-25deg); animation: reflexoVidro 4s infinite; 
+        }
+
+        /* SEÇÕES SPLIT */
+        .conteudo-split { display: flex; align-items: stretch; gap: 40px; margin-top: 30px; }
+        .split-texto { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .split-img { flex: 1.2; width: 100%; min-height: 400px; }
+
+        /* CLASSES IMAGENS REAIS */
+        .img-split { width: 100%; height: 100%; min-height: 400px; object-fit: cover; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        
+        .img-wrapper {
+            position: relative; 
+            width: 100%; height: 220px; min-height: 220px;
+            border-radius: 12px; margin-bottom: 20px; overflow: hidden; 
+        }
+        
+        .img-card { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* DEPOIMENTOS */
+        .depoimento-foto {
+            width: 90px; height: 90px; border-radius: 50%; object-fit: cover; 
+            margin: 0 auto 15px; display: block; border: 2px solid var(--verde-secundario); background-color: #e8e3d5; 
+        }
+        .estrelas { color: #FFD700; font-size: 1.5rem; margin-bottom: 15px; letter-spacing: 2px; }
+
+
+        /* ========================================================== */
+        /* SUPER MESA DE CONTROLE: TODAS AS IMAGENS INDIVIDUAIS       */
+        /* !!! TODAS AS POSIÇÕES PRESERVADAS COMO REGRA DO MESTRE !!! */
+        /* ========================================================== */
+
+        /* 1. MESA DE CONTROLE: FOTOS DO "DIA A DIA" (ABA INÍCIO) */
+        #track-home .card-servico:nth-of-type(1) .img-card { object-position: 50% 50%; } /* Aniversários */
+        #track-home .card-servico:nth-of-type(2) .img-card { object-position: 50% 30%; } /* Festa Junina */
+        
+        /* ---> REGRA FIXA BLINDADA: Dia da Beleza (Card 3) <--- */
+        #track-home .card-servico:nth-of-type(3) .img-card { 
+            transform: scale(1.3); 
+            object-position: 50% 50%; 
+        } 
+        #track-home .card-servico:nth-of-type(4) .img-card { object-position: 50% 20%; } /* Dia das Mulheres */
+
+        /* 2. MESA DE CONTROLE: DEPOIMENTOS (FOTOS DOS CLIENTES) */
+        #track-depoimentos .card-servico:nth-of-type(1) .depoimento-foto { object-position: 50% 50%; }
+        #track-depoimentos .card-servico:nth-of-type(2) .depoimento-foto { object-position: 50% 50%; }
+
+        /* 3. MESA DE CONTROLE: ABA "SOBRE NÓS" E "MISSÃO" (Mantido caso precise voltar!) */
+        #sobre .img-split { object-position: 50% 50%; }
+        #missao .img-split { object-position: 50% 50%; }
+
+        /* 4. MESA DE CONTROLE: SERVIÇOS */
+        #track-servicos .card-servico:nth-of-type(1) .img-card { object-position: 50% 50%; } /* Fisioterapeuta */
+        #track-servicos .card-servico:nth-of-type(2) .img-card { object-position: 50% 50%; } /* Nutricionista */
+        #track-servicos .card-servico:nth-of-type(3) .img-enf-1 { object-position: 50% 50%; } /* Enfermagem 1 */
+        #track-servicos .card-servico:nth-of-type(3) .img-enf-2 { object-position: 50% 50%; } /* Enfermagem 2 */
+        #track-servicos .card-servico:nth-of-type(4) .img-card { object-position: 50% 50%; } /* Cuidadores */
+        #track-servicos .card-servico:nth-of-type(5) .img-card { object-position: 50% 50%; } /* Monitoramento */
+        #track-servicos .card-servico:nth-of-type(6) .img-card { object-position: 50% 10%; } /* Médico */
+        #track-servicos .card-servico:nth-of-type(7) .img-card { object-position: 50% 50%; } /* Cozinha Própria */
+
+        /* 5. MESA DE CONTROLE: ESPAÇO UNIDADE 1 */
+        #track-galeria-espaco1 .gallery-item:nth-of-type(1) .img-gallery { object-position: 50% 50%; }
+        #track-galeria-espaco1 .gallery-item:nth-of-type(2) .img-gallery { object-position: 50% 15%; }
+        #track-galeria-espaco1 .gallery-item:nth-of-type(3) .img-gallery { object-position: 50% 50%; }
+        #track-galeria-espaco1 .gallery-item:nth-of-type(4) .img-gallery { object-position: 50% 50%; }
+        #track-galeria-espaco1 .gallery-item:nth-of-type(5) .img-gallery { object-position: 50% 50%; }
+        #track-galeria-espaco1 .gallery-item:nth-of-type(6) .img-gallery { object-position: 50% 50%; }
+
+        /* 6. MESA DE CONTROLE: ESPAÇO UNIDADE 2 */
+        #track-galeria-espaco2 .gallery-item:nth-of-type(1) .img-gallery { object-position: 50% 50%; }
+        #track-galeria-espaco2 .gallery-item:nth-of-type(2) .img-gallery { object-position: 50% 50%; }
+        #track-galeria-espaco2 .gallery-item:nth-of-type(3) .img-gallery { object-position: 50% 50%; }
+        #track-galeria-espaco2 .gallery-item:nth-of-type(4) .img-gallery { object-position: 50% 50%; }
+
+        /* 7. MESA DE CONTROLE: EVENTOS */
+        #track-galeria-mulheres .gallery-item:nth-of-type(1) .img-gallery { object-position: 50% 20%; }
+        #track-galeria-mulheres .gallery-item:nth-of-type(2) .img-gallery { object-position: 50% 50%; }
+        #track-galeria-mulheres .gallery-item:nth-of-type(3) .img-gallery { object-position: 50% 20%; }
+
+        #track-galeria-carnaval .gallery-item:nth-of-type(1) .img-gallery { object-position: 50% 30%; }
+        #track-galeria-carnaval .gallery-item:nth-of-type(2) .img-gallery { object-position: 50% 20%; }
+        #track-galeria-carnaval .gallery-item:nth-of-type(3) .img-gallery { object-position: 50% 10%; }
+
+        #track-galeria-junina .gallery-item:nth-of-type(1) .img-gallery { object-position: 50% 20%; }
+        #track-galeria-junina .gallery-item:nth-of-type(2) .img-gallery { object-position: 50% 50%; }
+        #track-galeria-junina .gallery-item:nth-of-type(3) .img-gallery { object-position: 50% 50%; }
+
+        #track-galeria-diadia .gallery-item:nth-of-type(1) .img-gallery { object-position: 50% 20%; }
+        #track-galeria-diadia .gallery-item:nth-of-type(2) .img-gallery { object-position: 50% 10%; }
+        #track-galeria-diadia .gallery-item:nth-of-type(3) .img-gallery { object-position: 50% 45%; }
+
+        /* 8. MESA DE CONTROLE: FOTOS DAS FACHADAS (RODAPÉ) */
+        .img-f1 { object-position: 50% 50%; }
+        .img-f2 { object-position: 50% 50%; }
+
+        /* ================= FIM DA MESA DE CONTROLE ================== */
+
+        /* ALIMENTAÇÃO (CARDS ESTÁTICOS LIMPOS) */
+        .lista-refeicoes { list-style: none; margin: 40px 0; display: flex; flex-direction: column; gap: 15px; }
+        .card-estatico {
+            background: rgba(255,255,255,0.7);
+            border-radius: 15px;
+            border-left: 8px solid var(--verde-secundario);
+            padding: 25px 30px;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, background 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        .card-estatico:hover {
+            transform: translateX(10px);
+            background: #fff;
+        }
+        .card-estatico strong {
+            color: var(--verde-destaque);
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+
+        /* CARROSSEL GERAL (Serviços e Home) */
+        .carrossel-wrapper { position: relative; width: 100%; margin: 30px 0 10px; }
+        .carrossel-track { 
+            display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; 
+            padding: 40px calc(50% - (var(--card-width) / 2)); scroll-behavior: smooth; scrollbar-width: none;
+        }
+        .carrossel-track::-webkit-scrollbar { display: none; }
+        
+        .card-servico { 
+            scroll-snap-align: center; flex: 0 0 var(--card-width); background: #fff; padding: 25px; border-radius: 15px; text-align: center; 
+            transition: all 0.4s ease; opacity: 0.4; filter: blur(4px); transform: scale(0.85); box-shadow: 0 5px 15px rgba(0,0,0,0.05); min-height: 400px; 
+            display: flex; flex-direction: column; justify-content: space-between; 
+        }
+        .card-servico.ativo { opacity: 1; filter: blur(0); transform: scale(1.05); box-shadow: 0 15px 35px rgba(0,0,0,0.15); border: 1px solid var(--verde-secundario); }
+
+        /* ANIMAÇÃO CROSSFADE: CARTÃO DE ENFERMAGEM */
+        .img-enf { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .img-enf-1 { animation: fadeEnf1 8s infinite; }
+        .img-enf-2 { animation: fadeEnf2 8s infinite; }
+        
+        @keyframes fadeEnf1 {
+            0%, 45% { opacity: 1; }
+            50%, 95% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes fadeEnf2 {
+            0%, 45% { opacity: 0; }
+            50%, 95% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* CARROSSEL DE GALERIAS (Eventos e Espaço) */
+        .gallery-item {
+            scroll-snap-align: center; 
+            flex: 0 0 600px; max-width: 85vw; height: 380px; 
+            transition: all 0.5s ease; 
+            opacity: 1; filter: none; transform: scale(0.9); 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .gallery-item.ativo { transform: scale(1.05); }
+        .img-gallery { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+
+        /* NAVEGAÇÃO */
+        .controle-btn { 
+            position: absolute; top: 50%; transform: translateY(-50%); background: var(--verde-secundario); color: white; width: 45px; height: 45px; 
+            border-radius: 50%; border: none; cursor: pointer; z-index: 10; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: 0.3s;
+        }
+        .controle-btn:hover { background: var(--verde-destaque); transform: translateY(-50%) scale(1.1); }
+        .controle-btn.prev { left: 5%; }
+        .controle-btn.next { right: 5%; }
+
+        .carrossel-indicadores { display: flex; justify-content: center; gap: 10px; margin-top: 5px; margin-bottom: 30px; }
+        .indicador { width: 12px; height: 12px; border-radius: 50%; background-color: #d1d5c9; cursor: pointer; transition: 0.3s ease; }
+        .indicador.ativo { background-color: var(--verde-destaque); transform: scale(1.3); }
+
+        /* ========================================================== */
+        /* DESIGN DO RODAPÉ                                           */
+        /* ========================================================== */
+        footer { background: var(--verde-secundario); color: white; padding: 50px 5%; margin-top: 40px; }
+        
+        .footer-content { 
+            display: flex; align-items: center; justify-content: space-around; 
+            max-width: 1200px; margin: 0 auto; gap: 30px; flex-wrap: wrap; text-align: left; 
+        }
+        
+        .footer-texto { flex: 1; min-width: 280px; }
+        .footer-texto p { margin-bottom: 5px; }
+        
+        /* Container responsivo para as fachadas */
+        .footer-col-fachada {
+            display: flex; flex-direction: column; align-items: center;
+            width: 100%; max-width: 350px;
+        }
+
+        .footer-fachada {
+            position: relative; width: 100%; height: 230px; border-radius: 15px; overflow: hidden; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;
+            background-color: var(--verde-secundario); 
+        }
+        
+        .img-fachada { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: cover; 
+            opacity: 0; transition: opacity 0.6s ease; 
+        }
+        
+        .img-fachada.ativo { opacity: 1; } 
+        
+        .ind-fachada { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
+        .dot-f { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s; }
+        .dot-f.ativo { background: #fff; transform: scale(1.2); }
+
+        /* ========================================================== */
+        /* DESIGN DO COELHINHO E POP-UP DE PÁSCOA                     */
+        /* ========================================================== */
+        
+        /* 1. ÍCONE NO CANTO INFERIOR DIREITO */
+        #easter-icon-container {
+            position: fixed; bottom: 30px; right: 30px; 
+            width: 120px; height: 120px;
+            z-index: 2000; transition: 0.3s ease;
+            border-radius: 50%; padding: 0; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        #easter-icon-container:hover { transform: scale(1.05); }
+
+        .easter-img {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            transition: opacity 0.3s ease;
+            object-fit: cover; 
+            transform: scale(1.1); 
+        }
+        
+        #easter-img-default { opacity: 1; }
+        #easter-img-hover { opacity: 0; }
+        #easter-icon-container:hover #easter-img-default { opacity: 0; }
+        #easter-icon-container:hover #easter-img-hover { opacity: 1; }
+
+        /* 2. OVERLAY DO POP-UP (FUNDO ESCURO) */
+        #easter-popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            z-index: 3000; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.5s ease;
+        }
+        
+        #easter-popup-overlay.mostrar { display: flex; opacity: 1; }
+
+        /* 3. CONTEÚDO DO POP-UP (CARTINHA) */
+        #easter-popup-content {
+            position: relative; max-width: 90%; max-height: 90%; background-color: #fff;
+            padding: 20px; border-radius: 15px; border: 4px solid var(--verde-secundario);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+            transform: scale(0.7); transition: transform 0.5s cubic-bezier(0.3, 1.5, 0.5, 1);
+        }
+        #easter-popup-overlay.mostrar #easter-popup-content { transform: scale(1); }
+
+        #easter-popup-close {
+            position: absolute; top: -20px; right: -20px; background: #fff; color: var(--verde-secundario);
+            border: 3px solid var(--verde-secundario); border-radius: 50%; width: 45px; height: 45px;
+            font-size: 28px; font-weight: bold; font-family: 'Lora', serif; cursor: pointer; transition: 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #easter-popup-close:hover { background: var(--verde-secundario); color: #fff; transform: rotate(90deg); }
+
+        #easter-invitation-img { max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 10px; }
+
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 768px) {
+            :root { --card-width: 80vw; } 
+            .conteudo-split { flex-direction: column; gap: 20px; }
+            .split-img { order: -1; flex: none; height: 280px; min-height: 280px; } 
+            .img-split { min-height: 280px; } 
+            .hero-fullscreen { height: 50vh; padding-bottom: 20px; }
+            .cards-container { gap: 10px; }
+            .glass-card { flex: 1 1 150px; max-width: 48%; padding: 15px 10px; font-size: 0.9rem; } 
+            .controle-btn { display: none; } 
+            .gallery-item { flex: 0 0 85vw; height: 250px; } 
+            .footer-content { flex-direction: column; text-align: center; }
+            
+            /* Ajustes para os cards estáticos no mobile */
+            .card-estatico { flex-direction: column; align-items: flex-start; text-align: left; }
+            
+            .footer-col-fachada { max-width: 100%; margin-top: 20px; }
+            .footer-fachada { width: 100%; max-width: 350px; height: 55vw; min-height: 200px; max-height: 250px; }
+            
+            /* Ajustes para o coelhinho no celular */
+            #easter-icon-container { 
+                bottom: 15px; right: 15px; 
+                width: 80px; height: 80px;
+            }
+        }
+        @media (max-width: 480px) { .glass-card { flex: 1 1 100%; max-width: 100%; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+        <nav id="menu-dropdown">
+            <ul>
+                <li><a onclick="mudarTela('inicio')" id="link-inicio" class="nav-link active">Início</a></li>
+                <li><a onclick="mudarTela('sobre')" id="link-sobre" class="nav-link">Sobre Nós</a></li>
+                <li><a onclick="mudarTela('missao')" id="link-missao" class="nav-link">Missão</a></li>
+                <li><a onclick="mudarTela('espaco')" id="link-espaco" class="nav-link">Espaço</a></li>
+                <li><a onclick="mudarTela('alimentacao')" id="link-alimentacao" class="nav-link">Alimentação</a></li>
+                <li><a onclick="mudarTela('servicos')" id="link-servicos" class="nav-link">Serviços</a></li>
+                <li><a onclick="mudarTela('eventos')" id="link-eventos" class="nav-link">Eventos</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="inicio" class="tela ativa fade-in">
+        
+        <div class="hero-fullscreen">
+            <video autoplay muted playsinline class="hero-video">
+                <source src="banner-video.mp4" type="video/mp4">
+            </video>
+            <a href="https://wa.me/5513992107969" target="_blank" class="btn">Agendar Visita pelo WhatsApp</a>
+        </div>
+
+        <div class="cards-container">
+            <div class="glass-card">Instituição Legalizada</div>
+            <div class="glass-card">CNPJ Regularizado</div>
+            <div class="glass-card">Alvará de Funcionamento</div>
+            <div class="glass-card">Vistoria Bombeiros</div>
+            <div class="glass-card">Conselho do Idoso</div>
+            <div class="glass-card">Detector de Fumaça</div>
+        </div>
+
+        <h2 style="text-align: center; margin-top: 80px; font-size: 2.2rem; color: var(--verde-destaque);">Dia a dia</h2>
+        
+        <div class="carrossel-wrapper">
+            <button class="controle-btn prev" onclick="moverCarrossel('track-home', -1)">❮</button>
+            <div class="carrossel-track" id="track-home">
+                
+                <div class="card-servico ativo">
+                    <div class="img-wrapper">
+                        <img src="foto.dia.a.dia.1.jpg" alt="Aniversários" class="img-card">
+                    </div>
+                    <h3>Aniversários</h3>
+                    <p>Celebrações mensais com os residentes.</p>
+                </div>
+                <div class="card-servico">
+                    <div class="img-wrapper">
+                        <img src="foto.dia.a.dia.3.jpg" alt="Festa Junina" class="img-card">
+                    </div>
+                    <h3>Festa Junina</h3>
+                    <p>Comidas típicas e muita alegria e dança.</p>
+                </div>
+                <div class="card-servico">
+                    <div class="img-wrapper">
+                        <img src="foto.dia.a.dia.4.jpg" alt="Dia da Beleza" class="img-card">
+                    </div>
+                    <h3>Dia da Beleza</h3>
+                    <p>Cuidados pessoais com carinho.</p>
+                </div>
+                <div class="card-servico">
+                    <div class="img-wrapper">
+                        <img src="foto.dia.a.dia.5.jpg" alt="Dia das Mulheres" class="img-card">
+                    </div>
+                    <h3>Dia das Mulheres</h3>
+                    <p>Homenagem e celebração especial para nossas queridas residentes.</p>
+                </div>
+
+            </div>
+            <button class="controle-btn next" onclick="moverCarrossel('track-home', 1)">❯</button>
+        </div>
+
+        <h2 style="text-align: center; margin-top: 80px; font-size: 2.2rem; color: var(--verde-destaque);">O que dizem sobre nós</h2>
+        <p style="text-align: center; margin-bottom: 20px;">A confiança das famílias é o nosso maior presente.</p>
+        <div class="carrossel-wrapper">
+            <button class="controle-btn prev" onclick="moverCarrossel('track-depoimentos', -1)">❮</button>
+            <div class="carrossel-track" id="track-depoimentos">
+                
+                <div class="card-servico ativo">
+                    <img src="foto.depoimento.1.jpg" alt="Cliente 1" class="depoimento-foto">
+                    <div class="estrelas">★★★★★</div>
+                    <p style="font-style: italic; flex-grow: 1;">"Lugar maravilhoso, cuidam da minha mãe com muito amor e carinho. A estrutura é excelente e sempre me mantêm informada."</p>
+                    <h4 style="margin-top: 15px; font-size: 1rem; color: var(--verde-secundario);">- Maria Aparecida</h4>
+                </div>
+                <div class="card-servico">
+                    <img src="foto.depoimento.2.jpg" alt="Cliente 2" class="depoimento-foto">
+                    <div class="estrelas">★★★★★</div>
+                    <p style="font-style: italic; flex-grow: 1;">"Ambiente familiar e muito limpo. Meu pai se adaptou super rápido, a comida é ótima e as atividades animam muito ele."</p>
+                    <h4 style="margin-top: 15px; font-size: 1rem; color: var(--verde-secundario);">- Carlos Eduardo</h4>
+                </div>
+
+            </div>
+            <button class="controle-btn next" onclick="moverCarrossel('track-depoimentos', 1)">❯</button>
+        </div>
+    </main>
+
+    <section id="sobre" class="tela fade-in">
+        <div class="conteudo-split">
+            <div class="split-texto" style="text-align: center;">
+                <h2 style="font-size: 2.2rem; color: var(--verde-destaque);">Fundada por Mãe e Filha</h2>
+                <p>Em uma cidade praiana e tranquila, resolveram se unir adequando a casa da família para a construção do Residencial para idosos.</p>
+                <br>
+                <p>Há 23 anos atrás, a realidade mostrou que a população mais carente de cuidados eram os idosos dependentes, evidenciando Alzheimer, Parkinson e Depressão.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="missao" class="tela fade-in">
+        <div class="conteudo-split">
+            <div class="split-texto" style="text-align: center;">
+                <h2 style="font-size: 2.2rem; color: var(--verde-destaque);">Nossa Missão</h2>
+                <p>ILPI particular, fundada em 2003, oferecendo acolhimento e cuidados especiais, adaptando entretenimento e saúde.</p>
+                <br>
+                <p>Com sinergia entre essas ações possibilitando que os idosos tenham uma vida com qualidade, dignidade, respeito e bem estar.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="espaco" class="tela fade-in">
+        <h2 style="text-align: center; font-size: 2.2rem; color: var(--verde-destaque); margin-bottom: 20px;">Nosso Espaço</h2>
+        <p style="text-align: center; margin-bottom: 40px;">Conheça o conforto e a estrutura preparada especialmente para nossos residentes em ambas as unidades.</p>
+
+        <h3 style="text-align: center; font-size: 2rem; color: var(--verde-destaque);">Unidade 1</h3>
+        <div class="carrossel-wrapper">
+            <button class="controle-btn prev" onclick="moverCarrossel('track-galeria-espaco1', -1)">❮</button>
+            <div class="carrossel-track" id="track-galeria-espaco1">
+                <div class="gallery-item ativo"><img src="foto.espaco.1.jpg" alt="Espaço Unidade 1 - 1" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.espaco.2.jpg" alt="Espaço Unidade 1 - 2" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.espaco.3.jpg" alt="Espaço Unidade 1 - 3" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.espaco.4.jpg" alt="Espaço Unidade 1 - 4" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.espaco.5.jpg" alt="Espaço Unidade 1 - 5" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.espaco.6.jpg" alt="Espaço Unidade 1 - 6" class="img-gallery"></div>
+            </div>
+            <button class="controle-btn next" onclick="moverCarrossel('track-galeria-espaco1', 1)">❯</button>
+        </div>
+
+        <h3 style="text-align: center; margin-top: 50px; font-size: 2rem; color: var(--verde-destaque);">Unidade 2</h3>
+        <div class="carrossel-wrapper">
+            <button class="controle-btn prev" onclick="moverCarrossel('track-galeria-espaco2', -1)">❮</button>
+            <div class="carrossel-track" id="track-galeria-espaco2">
+                <div class="gallery-item ativo"><img src="foto.espaco.b.1.jpg" alt="Espaço Unidade 2 - 1" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.espaco.b.2.jpg" alt="Espaço Unidade 2 - 2" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.espaco.b.3.jpg" alt="Espaço Unidade 2 - 3" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.espaco.b.4.jpg" alt="Espaço Unidade 2 - 4" class="img-gallery"></div>
+            </div>
+            <button class="controle-btn next" onclick="moverCarrossel('track-galeria-espaco2', 1)">❯</button>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="https://wa.me/5513992107969" target="_blank" class="btn">Agendar uma visita presencial</a>
+        </div>
+    </section>
+
+    <section id="alimentacao" class="tela fade-in">
+        <h2 style="text-align: center; font-size: 2rem;">Alimentação Balanceada</h2>
+        <p style="text-align: center; margin-bottom: 20px;">Nosso cardápio é pensado com carinho para oferecer nutrição e sabor:</p>
+        
+        <ul class="lista-refeicoes">
+            <li class="card-estatico">
+                <strong>01. Café da manhã:</strong> 
+                <p>Refeição completa para começar bem o dia.</p>
+            </li>
+            <li class="card-estatico">
+                <strong>02. Lanche da manhã:</strong> 
+                <p>Uma pausa nutritiva e leve antes do almoço.</p>
+            </li>
+            <li class="card-estatico">
+                <strong>03. Almoço Nutritivo:</strong> 
+                <p>Almoço caseiro e balanceado com acompanhamento.</p>
+            </li>
+            <li class="card-estatico">
+                <strong>04. Café da tarde:</strong> 
+                <p>Lanche da tarde fresquinho feito na hora.</p>
+            </li>
+            <li class="card-estatico">
+                <strong>05. Jantar:</strong> 
+                <p>Refeição noturna nutritiva e de fácil digestão.</p>
+            </li>
+            <li class="card-estatico">
+                <strong>06. Ceia:</strong> 
+                <p>Um lanchinho leve preparado para antes de dormir.</p>
+            </li>
+        </ul>
+    </section>
+
+    <section id="servicos" class="tela fade-in">
+        <h2 style="text-align: center;">Nossos Serviços</h2>
+        <div class="carrossel-wrapper">
+            <button class="controle-btn prev" onclick="moverCarrossel('track-servicos', -1)">❮</button>
+            <div class="carrossel-track" id="track-servicos">
+                
+                <div class="card-servico ativo">
+                    <div class="img-wrapper">
+                        <img src="foto.servico.1.jpg" alt="Fisioterapeuta" class="img-card">
+                    </div>
+                    <h3>Fisioterapeuta</h3>
+                    <p>Horários a definir</p>
+                </div>
+                <div class="card-servico">
+                    <div class="img-wrapper">
+                        <img src="foto.servico.2.jpg" alt="Nutricionista" class="img-card">
+                    </div>
+                    <h3>Nutricionista</h3>
+                    <p>Horários a definir</p>
+                </div>
+                <div class="card-servico">
+                    <div class="img-wrapper">
+                        <img src="foto.servico.3a.jpg" alt="Enfermagem 1" class="img-enf img-enf-1">
+                        <img src="foto.servico.3b.jpg" alt="Enfermagem 2" class="img-enf img-enf-2">
+                    </div>
+                    <h3>Enfermagem</h3>
+                    <p>Acompanhamento contínuo</p>
+                </div>
+                <div class="card-servico">
+                    <div class="img-wrapper">
+                        <img src="foto.servico.4.jpg" alt="Cuidadores" class="img-card">
+                    </div>
+                    <h3>Cuidadores</h3>
+                    <p>Disponíveis 24hrs</p>
+                </div>
+                <div class="card-servico">
+                    <div class="img-wrapper">
+                        <img src="foto.servico.5.jpg" alt="Monitoramento" class="img-card">
+                    </div>
+                    <h3>Monitoramento</h3>
+                    <p>Câmeras 24hrs</p>
+                </div>
+                <div class="card-servico">
+                    <div class="img-wrapper">
+                        <img src="foto.servico.6.jpg" alt="Médico" class="img-card">
+                    </div>
+                    <h3>Médico</h3>
+                    <p>Semanal</p>
+                </div>
+                <div class="card-servico">
+                    <div class="img-wrapper">
+                        <img src="foto.servico.7.jpg" alt="Cozinha Própria" class="img-card">
+                    </div>
+                    <h3>Cozinha Própria</h3>
+                    <p>Preparo no local</p>
+                </div>
+
+            </div>
+            <button class="controle-btn next" onclick="moverCarrossel('track-servicos', 1)">❯</button>
+        </div>
+        <div class="carrossel-indicadores" id="indicadores-container"></div>
+        <div style="text-align: center; margin-top: 10px;">
+            <a href="https://wa.me/5513992107969" target="_blank" class="btn">Fale com nossa equipe</a>
+        </div>
+    </section>
+
+    <section id="eventos" class="tela fade-in">
+        <h2 style="text-align: center; font-size: 2.2rem; color: var(--verde-destaque); margin-bottom: 20px;">Eventos e Celebrações</h2>
+        
+        <h3 style="text-align: center; margin-top: 50px; font-size: 2rem; color: var(--verde-destaque);">Dia das Mulheres</h3>
+        <div class="carrossel-wrapper">
+            <button class="controle-btn prev" onclick="moverCarrossel('track-galeria-mulheres', -1)">❮</button>
+            <div class="carrossel-track" id="track-galeria-mulheres">
+                <div class="gallery-item ativo"><img src="foto.evento.mulheres.1.jpg" alt="Foto 1" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.evento.mulheres.2.jpg" alt="Foto 2" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.evento.mulheres.3.jpg" alt="Foto 3" class="img-gallery"></div>
+            </div>
+            <button class="controle-btn next" onclick="moverCarrossel('track-galeria-mulheres', 1)">❯</button>
+        </div>
+
+        <h3 style="text-align: center; margin-top: 50px; font-size: 2rem; color: var(--verde-destaque);">Carnaval</h3>
+        <div class="carrossel-wrapper">
+            <button class="controle-btn prev" onclick="moverCarrossel('track-galeria-carnaval', -1)">❮</button>
+            <div class="carrossel-track" id="track-galeria-carnaval">
+                <div class="gallery-item ativo"><img src="foto.evento.carnaval.1.jpg" alt="Foto 1" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.evento.carnaval.2.jpg" alt="Foto 2" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.evento.carnaval.3.jpg" alt="Foto 3" class="img-gallery"></div>
+            </div>
+            <button class="controle-btn next" onclick="moverCarrossel('track-galeria-carnaval', 1)">❯</button>
+        </div>
+
+        <h3 style="text-align: center; margin-top: 50px; font-size: 2rem; color: var(--verde-destaque);">Festa Junina</h3>
+        <div class="carrossel-wrapper">
+            <button class="controle-btn prev" onclick="moverCarrossel('track-galeria-junina', -1)">❮</button>
+            <div class="carrossel-track" id="track-galeria-junina">
+                <div class="gallery-item ativo"><img src="foto.evento.junina.1.jpg" alt="Foto 1" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.evento.junina.2.jpg" alt="Foto 2" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.evento.junina.3.jpg" alt="Foto 3" class="img-gallery"></div>
+            </div>
+            <button class="controle-btn next" onclick="moverCarrossel('track-galeria-junina', 1)">❯</button>
+        </div>
+
+        <h3 style="text-align: center; margin-top: 50px; font-size: 2rem; color: var(--verde-destaque);">Dia a dia</h3>
+        <div class="carrossel-wrapper">
+            <button class="controle-btn prev" onclick="moverCarrossel('track-galeria-diadia', -1)">❮</button>
+            <div class="carrossel-track" id="track-galeria-diadia">
+                <div class="gallery-item ativo"><img src="foto.evento.diadia.1.jpg" alt="Foto 1" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.evento.diadia.2.jpg" alt="Foto 2" class="img-gallery"></div>
+                <div class="gallery-item"><img src="foto.evento.diadia.3.jpg" alt="Foto 3" class="img-gallery"></div>
+            </div>
+            <button class="controle-btn next" onclick="moverCarrossel('track-galeria-diadia', 1)">❯</button>
+        </div>
+
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-texto">
+                <p><strong>Residencial Senior K.BARROS</strong></p>
+                <p><strong>Unidade 1:</strong> Rua major Santos Silva, 38 canal 4</p>
+                <p><strong>Unidade 2:</strong> Rua Francisca Faria, 108 - canal 5</p>
+                <p><strong>Telefone:</strong> (13) 99210-7969</p>
+                <p style="margin-top: 20px; font-size: 0.8rem; opacity: 0.6;">&copy; 2026 K.Barros. Todos os direitos reservados.</p>
+            </div>
+            <div class="footer-col-fachada">
+                <div class="footer-fachada">
+                    <img src="foto.fachada.1.jpg" alt="Fachada Unidade 1" class="img-fachada img-f1 ativo">
+                    <img src="foto.fachada.2.jpg" alt="Fachada Unidade 2" class="img-fachada img-f2">
+                </div>
+                <div class="ind-fachada" id="ind-fachadas">
+                    <span class="dot-f ativo" onclick="currentFachada(0)"></span>
+                    <span class="dot-f" onclick="currentFachada(1)"></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="easter-icon-container">
+        <img src="coelho1.png" alt="Páscoa no K.Barros" id="easter-img-default" class="easter-img">
+        <img src="coelho2.png" alt="Páscoa Feliz!" id="easter-img-hover" class="easter-img">
+    </div>
+
+    <div id="easter-popup-overlay">
+        <div id="easter-popup-content">
+            <button id="easter-popup-close">&times;</button>
+            <img src="placeholder_cartinha.png" alt="Convite de Páscoa" id="easter-invitation-img">
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() { document.getElementById('menu-dropdown').classList.toggle('show'); }
+        window.onclick = function(e) {
+            if (!e.target.matches('.menu-toggle')) document.getElementById('menu-dropdown').classList.remove('show');
+        }
+
+        function mudarTela(id) {
+            document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            
+            document.getElementById(id).classList.add('ativa');
+            document.getElementById('link-' + id).classList.add('active');
+            
+            document.getElementById('menu-dropdown').classList.remove('show');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            setTimeout(() => {
+                document.querySelectorAll('.carrossel-track').forEach(track => atualizarFocoCarrossel(track));
+            }, 150);
+        }
+
+        const trackServicos = document.getElementById('track-servicos');
+        const cardsServicos = trackServicos.querySelectorAll('.card-servico');
+        const indContainer = document.getElementById('indicadores-container');
+
+        cardsServicos.forEach((card, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('indicador');
+            if(index === 0) dot.classList.add('ativo'); 
+            
+            dot.addEventListener('click', () => {
+                const pos = card.offsetLeft - (trackServicos.offsetWidth / 2) + (card.offsetWidth / 2);
+                trackServicos.scrollTo({ left: pos, behavior: 'smooth' });
+            });
+            indContainer.appendChild(dot);
+        });
+
+        function atualizarFocoCarrossel(trackElement) {
+            if(!trackElement) return;
+            const cards = trackElement.querySelectorAll('.card-servico, .gallery-item');
+            const trackCenter = trackElement.scrollLeft + (trackElement.offsetWidth / 2);
+            let activeIndex = 0;
+            let minDiff = Infinity;
+
+            cards.forEach((card, i) => {
+                const cardCenter = card.offsetLeft + (card.offsetWidth / 2);
+                const diff = Math.abs(trackCenter - cardCenter);
+                if (diff < minDiff) { minDiff = diff; activeIndex = i; }
+            });
+
+            cards.forEach((card, i) => {
+                card.classList.toggle('ativo', i === activeIndex);
+                if (trackElement.id === 'track-servicos') {
+                    const dots = document.querySelectorAll('#indicadores-container .indicador');
+                    if(dots[i]) dots[i].classList.toggle('ativo', i === activeIndex);
+                }
+            });
+        }
+
+        document.querySelectorAll('.carrossel-track').forEach(track => {
+            track.addEventListener('scroll', (e) => atualizarFocoCarrossel(e.target));
+        });
+
+        function moverCarrossel(trackId, dir) {
+            const track = document.getElementById(trackId);
+            const cards = track.querySelectorAll('.card-servico, .gallery-item');
+            const cardWidth = cards[0].offsetWidth + 20; 
+            track.scrollBy({ left: dir * cardWidth, behavior: 'smooth' });
+        }
+
+        let currentFachIndex = 0;
+        const fachadas = document.querySelectorAll('.img-fachada');
+        const dotsF = document.querySelectorAll('.dot-f');
+        let autoFachTimer;
+
+        function showFachada(n) {
+            currentFachIndex = n;
+            if (currentFachIndex >= fachadas.length) { currentFachIndex = 0; }
+            if (currentFachIndex < 0) { currentFachIndex = fachadas.length - 1; }
+
+            for (let i = 0; i < fachadas.length; i++) {
+                fachadas[i].classList.remove('ativo');
+                dotsF[i].classList.remove('ativo');
+            }
+            fachadas[currentFachIndex].classList.add('ativo');
+            dotsF[currentFachIndex].classList.add('ativo');
+        }
+
+        function currentFachada(n) {
+            resetAutoFach();
+            showFachada(n);
+        }
+
+        function resetAutoFach() {
+            clearInterval(autoFachTimer);
+            startAutoFach();
+        }
+
+        function startAutoFach() {
+            autoFachTimer = setInterval(() => {
+                showFachada(currentFachIndex + 1);
+            }, 5000); 
+        }
+
+        startAutoFach();
+
+        /* ========================================================== */
+        /* JAVASCRIPT PARA O POP-UP DE PÁSCOA                       */
+        /* ========================================================== */
+        const easterIcon = document.getElementById('easter-icon-container');
+        const easterOverlay = document.getElementById('easter-popup-overlay');
+        const easterClose = document.getElementById('easter-popup-close');
+
+        // 1. Ouvinte para CLICAR no coelhinho e ABRIR o pop-up
+        easterIcon.addEventListener('click', function() {
+            easterOverlay.classList.add('mostrar'); // Adiciona a classe que mostra com animação
+        });
+
+        // 2. Ouvinte para CLICAR no "X" e FECHAR o pop-up
+        easterClose.addEventListener('click', fecharPopupPascoa);
+
+        // 3. Ouvinte para CLICAR no fundo escuro e FECHAR o pop-up
+        easterOverlay.addEventListener('click', function(event) {
+            // Garante que o fechamento só ocorra se clicar no fundo, não na imagem
+            if (event.target === easterOverlay) fecharPopupPascoa();
+        });
+
+        // 4. Função auxiliar para fechar
+        function fecharPopupPascoa() {
+            easterOverlay.classList.remove('mostrar'); // Remove a classe e a animação reverte
+        }
+        
+        // 5. Opcional: Fechar com a tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && easterOverlay.classList.contains('mostrar')) fecharPopupPascoa();
+        });
+    </script>
+</body>
+</html>
